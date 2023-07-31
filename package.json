@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "serve dist -s -n -L",
+    "start": "serve dist -s -n -L $PORT",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "format": "prettier --write src/"
   },
@@ -16,6 +16,7 @@
     "primeflex": "^3.3.1",
     "primeicons": "^6.0.1",
     "primevue": "^3.30.2",
+    "serve": "^14.2.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.2"
   },
