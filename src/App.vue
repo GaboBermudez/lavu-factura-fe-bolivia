@@ -1,20 +1,24 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import TituloPrincipal from '@/components/TituloPrincipal.vue'
+import AccountCard from './components/AccountCard.vue';
 </script>
 
 <template>
   <header>
-    <img alt="Selina logo" class="logo" src="@/assets/selina-logo-black.png" width="210" height="75" />
+    <div>
+      <img alt="Selina logo" class="logo" src="@/assets/selina-logo-black.png" width="210" height="75" />
+      <AccountCard />
+    </div>
 
     <div class="wrapper">
       <TituloPrincipal />
 
-      <nav>
+      <!-- <nav>
         <RouterLink to="/">Facturar</RouterLink>
-        <!-- <RouterLink to="/configuracion">Configuración</RouterLink> -->
+        <RouterLink to="/configuracion">Configuración</RouterLink>
         <RouterLink to="/login">Cerrar sesión</RouterLink>
-      </nav>
+      </nav> -->
     </div>
   </header>
 

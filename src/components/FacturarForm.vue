@@ -167,7 +167,7 @@ const facturar = async () => {
   try {
     showLoadingSpinner.value = true
     const payload = {
-      orderId: orderId.value,
+      orderId: orderId.value.trim(),
       esControlTributario: !esContribuyente.value,
       codigoTipoDocumentoIdentidad: codigoTipoDocumentoIdentidad.value,
       codigoMetodoPago: codigoMetodoPago.value

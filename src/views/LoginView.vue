@@ -1,5 +1,6 @@
 <template>
   <main>
+    <Toast />
     <div class="login-container">
       <Card class="login-card">
         <template #title>Iniciar sesión</template>
@@ -24,26 +25,36 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { useToast } from "primevue/usetoast"
+import { login } from '@/services/FacturacionApi.js'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
-import { login } from '@/services/FacturacionApi.js'
+import Toast from 'primevue/toast'
 
 const router = useRouter()
+const userStore = useUserStore()
 
 const username = ref('')
 const password = ref('')
 
-const loginHandler = () => {
-  // Perform login logic here
-  
-  console.log('Username:', username.value)
-  console.log('Password:', password.value)
-
-  login( { username: username.value, password: password.value })
-
-  router.push('/')
+const loginHandler = async () => {  
+  try {
+    const userData = await login( { username: username.value, password: password.value })
+    userStore.login(userData)
+    router.push('/')
+  } catch (e) {
+    if (e.response.status === 401)
+    showFailToast("Usuario y/o contraseña incorrecta.")
+  }
+}
+ 
+const toast = useToast()
+const showFailToast = (message) => {
+  // const detail = response.data.errors[0].slice(0, 72)
+  toast.add({ severity: 'error', summary: 'Hubo un problema', detail: message, life: 7000 })
 }
 </script>
 

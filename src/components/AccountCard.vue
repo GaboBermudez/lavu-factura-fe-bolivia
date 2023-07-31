@@ -1,0 +1,21 @@
+<template>
+  <div v-if="userStore.isAuthenticated" class="mr-5 w-13rem flex flex-column gap-2 text-center">
+    <p>{{ userStore.userObj.nombre }}</p>
+    <Button label="CERRAR SESIÓN" outlined severity="danger" @click="logout"/>
+  </div>
+</template>
+
+<script setup>
+import Button from "primevue/button"
+import { useUserStore } from '@/stores/user.js'
+import { useRouter } from "vue-router"
+
+const userStore = useUserStore()
+const router = useRouter()
+
+const logout = () => {
+  userStore.logout()
+  router.push('/login')
+}
+
+</script>
