@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 
-// const url = 'https://lavu-factura-api-bolivia-production.up.railway.app'
-const url = 'http://localhost:8080'
+const url = 'https://lavu-factura-api-bolivia-production.up.railway.app'
+// const url = 'http://localhost:8080'
 
 export async function enviarFactura(payload) {
   const headers = obtenerAuthHeaders()
