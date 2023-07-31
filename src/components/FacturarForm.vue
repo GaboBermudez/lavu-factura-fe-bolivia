@@ -1,0 +1,209 @@
+<template>
+  <div>
+    <Toast />
+    <ConfirmDialog />
+    <div class="loadingOverlay" v-if="showLoadingSpinner">
+      <ProgressSpinner />
+    </div>
+    <h1 class="mb-0 mt-5">Facturar</h1>
+    <Divider class="mt-0"/>
+    <div class="flex flex-column gap-4">
+      <div class="flex flex-column gap-2">
+        <label for="orderId">Orden de LAVU</label>
+        <InputText required id="orderId" type="text" v-model="orderId"/>
+      </div>
+      <div class="flex flex-column gap-2">
+        <label for="codigoMetodoPago">Método de pago</label>
+        <Dropdown 
+        id="codigoMetodoPago" 
+        v-model="codigoMetodoPago" 
+        :options="metodosPago" 
+        optionLabel="descripcion"
+        optionValue="codigo"
+        />
+      </div>
+      <Transition>
+        <div v-if="pagoTarjeta" class="flex flex-column gap-2">
+          <label for="numeroTarjeta">Número de tarjeta</label>
+          <InputText id="numeroTarjeta" type="text" v-model="numeroTarjeta" />
+        </div>
+      </Transition>
+      <div class="card flex justify-content-center">
+        <span>Consumidor Final</span>
+        <InputSwitch class="mx-2" v-model="esContribuyente" />
+        <span>Contribuyente</span>
+      </div>
+      <Transition>
+        <div v-if="esContribuyente">
+          <h2 class="mb-2">Datos del cliente</h2>
+          <div class="flex flex-column gap-4">
+            <div class="flex flex-column gap-2">
+              <label for="codigoTipoDocumentoIdentidad">Documento de Identidad</label>
+              <Dropdown 
+              id="codigoTipoDocumentoIdentidad" 
+              v-model="codigoTipoDocumentoIdentidad" 
+              :options="documentosIdentidad" 
+              optionLabel="descripcion"
+              optionValue="codigo"
+              />
+            </div>
+            <div class="flex flex-column gap-2">
+              <label for="nombre">Nombre - Razón Social</label>
+              <InputText id="nombre" type="text" />
+            </div>
+            <div class="flex flex-column gap-2">
+              <label for="ruc">Número de identidad</label>
+              <InputText id="ruc" type="text" />
+            </div>
+            <div class="flex flex-column gap-2">
+              <label for="email">Email</label>
+              <InputText id="email" type="text" />
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </div>
+    <Button class="my-5" label="FACTURAR" @click="confirmFactura" />
+  </div>
+</template>
+
+<script setup>
+import Button from 'primevue/button'
+import ConfirmDialog from 'primevue/confirmdialog' 
+import Divider from 'primevue/divider'
+import Dropdown from 'primevue/dropdown'
+import InputSwitch from 'primevue/inputswitch'
+import InputText from 'primevue/inputtext'
+import ProgressSpinner from 'primevue/progressspinner'
+import Toast from 'primevue/toast'
+import { computed, ref } from 'vue'
+import { useToast } from "primevue/usetoast"
+import { useConfirm } from "primevue/useconfirm"
+import { enviarFactura } from '@/services/FacturacionApi'
+
+const documentosIdentidad = [
+  {
+    codigo: 1,
+    descripcion: 'CI - CEDULA DE IDENTIDAD',
+  },
+  {
+    codigo: 2,
+    descripcion: 'CEX - CEDULA DE IDENTIDAD DE EXTRANJERO',
+  },
+  {
+    codigo: 3,
+    descripcion: 'PAS - PASAPORTE',
+  },
+  {
+    codigo: 4,
+    descripcion: 'OD - OTRO DOCUMENTO DE IDENTIDAD',
+  },
+  {
+    codigo: 5,
+    descripcion: 'NIT - NÚMERO DE IDENTIFICACIÓN TRIBUTARIA',
+  },
+]
+
+const metodosPago = [
+  {
+    codigo: 1,
+    descripcion: 'EFECTIVO',
+  },
+  {
+    codigo: 2,
+    descripcion: 'TARJETA',
+  },
+  {
+    codigo: 7,
+    descripcion: 'TRANSFERENCIA BANCARIA',
+  },
+]
+
+// Form manipulation
+const pagoTarjeta = computed(() => codigoMetodoPago.value === 2)
+
+// Toast messages
+
+const toast = useToast()
+const orderId = ref(null)
+
+const showSucessToast = () => {
+  toast.add({ severity: 'success', summary: 'Factura emitida exitosamente', detail: `Factura para la orden ${orderId.value} enviada con éxito`, life: 7000 })
+}
+
+const showFailToast = () => {
+  // const detail = response.data.errors[0].slice(0, 72)
+  toast.add({ severity: 'error', summary: `Error al facturar orden ${orderId.value}`, detail: `Hubo un problema al facturar la orden ${orderId.value}`, life: 7000 })
+}
+
+
+// Confirmar factura
+
+const confirm = useConfirm()
+const esContribuyente = ref(false)
+
+const confirmFactura = () => {
+  let message = `¿Desea facturar la orden ${orderId.value}?`
+  if (esContribuyente.value) message = `${message} \nRecuerde revisar los datos del cliente.`
+
+  confirm.require({
+    message,
+    header: 'Confirmación',
+    icon: 'pi pi-exclamation-triangle',
+    accept: facturar,
+    reject: () => {}
+  })
+}
+
+
+// Facturacion
+
+const codigoTipoDocumentoIdentidad = ref(1)
+const codigoMetodoPago = ref(1)
+const showLoadingSpinner = ref(false)
+const numeroTarjeta = ref('')
+
+const facturar = async () => {
+  try {
+    showLoadingSpinner.value = true
+    const payload = {
+      orderId: orderId.value,
+      esControlTributario: !esContribuyente.value,
+      codigoTipoDocumentoIdentidad: codigoTipoDocumentoIdentidad.value,
+      codigoMetodoPago: codigoMetodoPago.value
+    }
+    await enviarFactura(payload)
+    showSucessToast()
+  } catch(e) {
+    showFailToast(e.response)
+  } finally {
+    showLoadingSpinner.value = false
+  }
+}
+
+</script>
+
+<style>
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+</style>
