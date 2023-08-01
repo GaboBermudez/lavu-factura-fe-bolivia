@@ -1,7 +1,24 @@
 <template>
   <div>
     <Toast />
-    <ConfirmDialog />
+    <ConfirmDialog> 
+      <template #message>
+        <div class="flex flex-column gap-5 p-5">
+          <h3 class="font-semibold">¿Está seguro que desea facturar la orden con los siguientes datos?</h3>
+          <ul>
+            <li>Orden de LAVU: <span class="font-semibold">{{ orderId }}</span></li>
+            <li>Método de pago: <span class="font-semibold">{{ metodoDePagoLabel }}</span></li>
+            <li v-if="pagoTarjeta">Número de tarjeta: <span class="font-semibold">{{ numeroTarjeta }}</span></li>
+            <div v-if="esContribuyente">
+              <li>Documento de identidad: <span class="font-semibold">{{  documentodeIdentidadLabel }}</span></li>
+              <li>Nombre/Razón Social: <span class="font-semibold">{{ nombreRazonSocial }}</span></li>
+              <li>Número de identificación: <span class="font-semibold">{{ numeroDocumento }}</span></li>
+              <li>Email: <span class="font-semibold">{{ emailCliente }}</span></li>
+            </div>
+          </ul>
+        </div>
+      </template>
+    </ConfirmDialog>
     <div class="loadingOverlay" v-if="showLoadingSpinner">
       <ProgressSpinner />
     </div>
@@ -169,6 +186,29 @@ const showFailToast = () => {
 // Confirmar factura
 
 const confirm = useConfirm()
+const metodoDePagoLabel = computed(() => {
+    const { descripcion } = metodosPago.find(metodo => {
+      return metodo.codigo === codigoMetodoPago.value
+    })
+    return descripcion
+})
+const documentodeIdentidadLabel = computed(() => {
+    const { descripcion } = documentosIdentidad.find(documento => {
+      return documento.codigo === codigoTipoDocumentoIdentidad.value
+    })
+    return descripcion
+})
+
+const limpiarCampos = () => {
+  orderId.value = ''
+  esContribuyente.value = false
+  codigoMetodoPago.value = 1
+  numeroTarjeta.value = ''
+  codigoTipoDocumentoIdentidad.value = 1
+  nombreRazonSocial.value = ''
+  numeroDocumento.value = ''
+  emailCliente.value = ''
+}
 
 const confirmFactura = () => {
   let message = `¿Desea facturar la orden ${orderId.value}?`
@@ -176,7 +216,7 @@ const confirmFactura = () => {
 
   confirm.require({
     message,
-    header: 'Confirmación',
+    header: 'Confirmación de factura',
     icon: 'pi pi-exclamation-triangle',
     accept: facturar,
     acceptLabel: 'Sí',
@@ -196,10 +236,15 @@ const facturar = async () => {
       orderId: orderId.value.trim(),
       esControlTributario: !esContribuyente.value,
       codigoTipoDocumentoIdentidad: codigoTipoDocumentoIdentidad.value,
-      codigoMetodoPago: codigoMetodoPago.value
+      codigoMetodoPago: codigoMetodoPago.value,
+      numeroTarjeta: numeroTarjeta.value,
+      nombreRazonSocial: nombreRazonSocial.value,
+      numeroDocumento: numeroDocumento.value,
+      emailCliente: emailCliente.value,
     }
     await enviarFactura(payload)
     showSucessToast()
+    limpiarCampos()
   } catch(e) {
     showFailToast(e.response)
   } finally {
