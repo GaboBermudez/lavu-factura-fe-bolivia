@@ -202,7 +202,7 @@ const limpiarCampos = () => {
   orderId.value = ''
   esContribuyente.value = false
   codigoMetodoPago.value = 1
-  numeroTarjeta.value = ''
+  numeroTarjeta.value = 0
   codigoTipoDocumentoIdentidad.value = 1
   nombreRazonSocial.value = ''
   numeroDocumento.value = ''
