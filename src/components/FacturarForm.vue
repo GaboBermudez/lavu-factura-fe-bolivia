@@ -42,7 +42,7 @@
       <Transition>
         <div v-if="pagoTarjeta" class="flex flex-column gap-2">
           <label for="numeroTarjeta">Número de tarjeta</label>
-          <InputText id="numeroTarjeta" type="text" v-model="numeroTarjeta" />
+          <InputNumber inputId="numeroTarjeta" type="text" v-model="numeroTarjeta" :useGrouping="false" />
           <InlineMessage severity="info">Debe ingresar numero de tarjeta si método de pago es TARJETA</InlineMessage>
         </div>
       </Transition>
@@ -92,6 +92,7 @@ import Divider from 'primevue/divider'
 import Dropdown from 'primevue/dropdown'
 import InlineMessage from 'primevue/inlinemessage'
 import InputSwitch from 'primevue/inputswitch'
+import InputNumber from 'primevue/inputnumber'
 import InputText from 'primevue/inputtext'
 import ProgressSpinner from 'primevue/progressspinner'
 import Toast from 'primevue/toast'
@@ -142,7 +143,7 @@ const metodosPago = [
 const orderId = ref('')
 const esContribuyente = ref(false)
 const codigoMetodoPago = ref(1)
-const numeroTarjeta = ref('')
+const numeroTarjeta = ref(0)
 const codigoTipoDocumentoIdentidad = ref(1)
 const nombreRazonSocial = ref('')
 const numeroDocumento = ref('')
