@@ -232,12 +232,17 @@ const showSucessToast = () => {
   })
 }
 
-const showFailToast = () => {
-  // const detail = response.data.errors[0].slice(0, 72)
+const showFailToast = (response) => {
+  let detail = `Hubo un problema al facturar la orden ${orderId.value}`
+  if (response.data && response.data.errors && response.data.errors.length > 0) {
+    if (response.data.errors[0].startsWith('Ya se encuentra registrada una factura')) {
+      detail = `La orden ${orderId.value} ya fue facturada previamente`
+    }
+  }
   toast.add({
     severity: 'error',
     summary: `Error al facturar orden ${orderId.value}`,
-    detail: `Hubo un problema al facturar la orden ${orderId.value}`,
+    detail,
     life: 7000
   })
 }
