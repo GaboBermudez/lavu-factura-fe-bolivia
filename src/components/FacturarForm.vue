@@ -59,21 +59,15 @@
           <div class="flex justify-content-between">
             <div class="flex flex-column">
               <label for="primerosDigitosTarjeta">Primeros 4 dígitos de la tarjeta</label>
-              <InputNumber
+              <InputText
                 inputId="primerosDigitosTarjeta"
                 type="text"
                 v-model="primerosNumsTarjeta"
-                :useGrouping="false"
               />
             </div>
             <div class="flex flex-column">
               <label for="ultimosDigitosTarjeta">Últimos 4 dígitos de la tarjeta</label>
-              <InputNumber
-                inputId="ultimosDigitosTarjeta"
-                type="text"
-                v-model="ultimosNumsTarjeta"
-                :useGrouping="false"
-              />
+              <InputText inputId="ultimosDigitosTarjeta" type="text" v-model="ultimosNumsTarjeta" />
             </div>
           </div>
           <InlineMessage severity="info"
@@ -127,7 +121,6 @@ import Divider from 'primevue/divider'
 import Dropdown from 'primevue/dropdown'
 import InlineMessage from 'primevue/inlinemessage'
 import InputSwitch from 'primevue/inputswitch'
-import InputNumber from 'primevue/inputnumber'
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
 import InputText from 'primevue/inputtext'
 import Toast from 'primevue/toast'
@@ -193,8 +186,8 @@ const metodosPago = [
 const orderId = ref('')
 const esContribuyente = ref(false)
 const codigoMetodoPago = ref(1)
-const primerosNumsTarjeta = ref(0)
-const ultimosNumsTarjeta = ref(0)
+const primerosNumsTarjeta = ref('')
+const ultimosNumsTarjeta = ref('')
 const codigoTipoDocumentoIdentidad = ref(1)
 const nombreRazonSocial = ref('')
 const numeroDocumento = ref('')
