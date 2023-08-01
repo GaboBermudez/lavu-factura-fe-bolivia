@@ -228,7 +228,7 @@ const showSucessToast = () => {
     severity: 'success',
     summary: 'Factura emitida exitosamente',
     detail: `Factura para la orden ${orderId.value} enviada con éxito`,
-    life: 7000
+    life: 15000
   })
 }
 
@@ -243,7 +243,7 @@ const showFailToast = (response) => {
     severity: 'error',
     summary: `Error al facturar orden ${orderId.value}`,
     detail,
-    life: 7000
+    life: 15000
   })
 }
 
