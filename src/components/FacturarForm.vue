@@ -19,9 +19,7 @@
         </div>
       </template>
     </ConfirmDialog>
-    <div class="loadingOverlay" v-if="showLoadingSpinner">
-      <ProgressSpinner />
-    </div>
+    <LoadingOverlay v-if="showLoadingSpinner" />
     <h1 class="mb-0 mt-5">Facturar</h1>
     <Divider class="mt-0"/>
     <div class="flex flex-column gap-4">
@@ -93,8 +91,8 @@ import Dropdown from 'primevue/dropdown'
 import InlineMessage from 'primevue/inlinemessage'
 import InputSwitch from 'primevue/inputswitch'
 import InputNumber from 'primevue/inputnumber'
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
 import InputText from 'primevue/inputtext'
-import ProgressSpinner from 'primevue/progressspinner'
 import Toast from 'primevue/toast'
 import { computed, ref } from 'vue'
 import { useToast } from "primevue/usetoast"
@@ -264,18 +262,5 @@ const facturar = async () => {
 .v-enter-from,
 .v-leave-to {
   opacity: 0;
-}
-
-.loadingOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 99999;
 }
 </style>

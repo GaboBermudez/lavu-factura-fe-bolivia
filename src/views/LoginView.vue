@@ -1,6 +1,7 @@
 <template>
   <main>
     <Toast />
+    <LoadingOverlay v-if="showLoadingOverlay"/>
     <div class="login-container">
       <Card class="login-card">
         <template #title>Iniciar sesión</template>
@@ -28,10 +29,11 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useToast } from "primevue/usetoast"
 import { login } from '@/services/FacturacionApi.js'
+import Button from 'primevue/button'
 import Card from 'primevue/card'
 import InputText from 'primevue/inputtext'
+import LoadingOverlay from '@/components/LoadingOverlay.vue'
 import Password from 'primevue/password'
-import Button from 'primevue/button'
 import Toast from 'primevue/toast'
 
 const router = useRouter()
@@ -40,14 +42,19 @@ const userStore = useUserStore()
 const username = ref('')
 const password = ref('')
 
+const showLoadingOverlay = ref(false)
+
 const loginHandler = async () => {  
   try {
+    showLoadingOverlay.value = true
     const userData = await login( { username: username.value, password: password.value })
     userStore.login(userData)
     router.push('/')
   } catch (e) {
     if (e.response.status === 401)
     showFailToast("Usuario y/o contraseña incorrecta.")
+  } finally {
+    showLoadingOverlay.value = false
   }
 }
  
