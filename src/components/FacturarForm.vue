@@ -41,7 +41,7 @@
         <div v-if="pagoTarjeta" class="flex flex-column gap-2">
           <label for="numeroTarjeta">Número de tarjeta</label>
           <InputNumber inputId="numeroTarjeta" type="text" v-model="numeroTarjeta" :useGrouping="false" />
-          <InlineMessage severity="info">Debe ingresar numero de tarjeta si método de pago es TARJETA</InlineMessage>
+          <InlineMessage severity="info">Debe ingresar número de tarjeta si método de pago es TARJETA</InlineMessage>
         </div>
       </Transition>
       <div class="card flex justify-content-center">
