@@ -10,7 +10,7 @@ import ProgressSpinner from 'primevue/progressspinner'
 
 <style scoped>
 .loadingOverlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
