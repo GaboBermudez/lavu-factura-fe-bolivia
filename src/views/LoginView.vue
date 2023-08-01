@@ -51,8 +51,11 @@ const loginHandler = async () => {
     userStore.login(userData)
     router.push('/')
   } catch (e) {
-    if (e.response.status === 401)
-    showFailToast("Usuario y/o contraseña incorrecta.")
+    if (e.response.status === 401) {
+      showFailToast('Usuario y/o contraseña incorrecta.')
+    } else {
+      showFailToast(e.message)
+    }
   } finally {
     showLoadingOverlay.value = false
   }
@@ -60,8 +63,7 @@ const loginHandler = async () => {
  
 const toast = useToast()
 const showFailToast = (message) => {
-  // const detail = response.data.errors[0].slice(0, 72)
-  toast.add({ severity: 'error', summary: 'Hubo un problema', detail: message, life: 7000 })
+  toast.add({ severity: 'error', summary: 'Hubo un problema iniciando sesión', detail: message, life: 7000 })
 }
 </script>
 
