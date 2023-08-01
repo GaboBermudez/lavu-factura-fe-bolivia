@@ -26,6 +26,7 @@
         <div v-if="pagoTarjeta" class="flex flex-column gap-2">
           <label for="numeroTarjeta">Número de tarjeta</label>
           <InputText id="numeroTarjeta" type="text" v-model="numeroTarjeta" />
+          <InlineMessage severity="info">Debe ingresar numero de tarjeta si método de pago es TARJETA</InlineMessage>
         </div>
       </Transition>
       <div class="card flex justify-content-center">
@@ -49,21 +50,21 @@
             </div>
             <div class="flex flex-column gap-2">
               <label for="nombre">Nombre - Razón Social</label>
-              <InputText id="nombre" type="text" />
+              <InputText id="nombre" type="text" v-model="nombreRazonSocial" />
             </div>
             <div class="flex flex-column gap-2">
               <label for="ruc">Número de identidad</label>
-              <InputText id="ruc" type="text" />
+              <InputText id="ruc" type="text" v-model="numeroDocumento" />
             </div>
             <div class="flex flex-column gap-2">
               <label for="email">Email</label>
-              <InputText id="email" type="text" />
+              <InputText id="email" type="text" v-model="emailCliente" />
             </div>
           </div>
         </div>
       </Transition>
     </div>
-    <Button class="my-5" label="FACTURAR" @click="confirmFactura" />
+    <Button :disabled="!enableFacturarBtn" class="my-5" label="FACTURAR" @click="confirmFactura" />
   </div>
 </template>
 
@@ -72,6 +73,7 @@ import Button from 'primevue/button'
 import ConfirmDialog from 'primevue/confirmdialog' 
 import Divider from 'primevue/divider'
 import Dropdown from 'primevue/dropdown'
+import InlineMessage from 'primevue/inlinemessage'
 import InputSwitch from 'primevue/inputswitch'
 import InputText from 'primevue/inputtext'
 import ProgressSpinner from 'primevue/progressspinner'
@@ -119,13 +121,40 @@ const metodosPago = [
   },
 ]
 
+// Form values
+const orderId = ref('')
+const esContribuyente = ref(false)
+const codigoMetodoPago = ref(1)
+const numeroTarjeta = ref('')
+const codigoTipoDocumentoIdentidad = ref(1)
+const nombreRazonSocial = ref('')
+const numeroDocumento = ref('')
+const emailCliente = ref('')
+
+
 // Form manipulation
 const pagoTarjeta = computed(() => codigoMetodoPago.value === 2)
+const pagoTarjetaValido = computed(() => {
+  if (!pagoTarjeta.value) {
+    return true
+  } else {
+    return !!numeroTarjeta.value
+  }
+})
+const datosClienteCompletos = computed(() => {
+  return nombreRazonSocial.value && numeroDocumento.value && emailCliente.value
+})
+const enableFacturarBtn = computed(() => {
+  if (orderId.value && !esContribuyente.value) {
+    return pagoTarjetaValido.value
+  } else {
+    return orderId.value && datosClienteCompletos.value && pagoTarjetaValido.value
+  }
+})
 
 // Toast messages
 
 const toast = useToast()
-const orderId = ref(null)
 
 const showSucessToast = () => {
   toast.add({ severity: 'success', summary: 'Factura emitida exitosamente', detail: `Factura para la orden ${orderId.value} enviada con éxito`, life: 7000 })
@@ -140,7 +169,6 @@ const showFailToast = () => {
 // Confirmar factura
 
 const confirm = useConfirm()
-const esContribuyente = ref(false)
 
 const confirmFactura = () => {
   let message = `¿Desea facturar la orden ${orderId.value}?`
@@ -151,6 +179,7 @@ const confirmFactura = () => {
     header: 'Confirmación',
     icon: 'pi pi-exclamation-triangle',
     accept: facturar,
+    acceptLabel: 'Sí',
     reject: () => {}
   })
 }
@@ -158,10 +187,7 @@ const confirmFactura = () => {
 
 // Facturacion
 
-const codigoTipoDocumentoIdentidad = ref(1)
-const codigoMetodoPago = ref(1)
 const showLoadingSpinner = ref(false)
-const numeroTarjeta = ref('')
 
 const facturar = async () => {
   try {
