@@ -169,7 +169,6 @@ const enableFacturarBtn = computed(() => {
 })
 
 // Toast messages
-
 const toast = useToast()
 
 const showSucessToast = () => {
@@ -183,7 +182,6 @@ const showFailToast = () => {
 
 
 // Confirmar factura
-
 const confirm = useConfirm()
 const metodoDePagoLabel = computed(() => {
     const { descripcion } = metodosPago.find(metodo => {
@@ -225,7 +223,6 @@ const confirmFactura = () => {
 
 
 // Facturacion
-
 const showLoadingSpinner = ref(false)
 
 const facturar = async () => {
