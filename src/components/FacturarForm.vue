@@ -39,8 +39,16 @@
       </div>
       <Transition>
         <div v-if="pagoTarjeta" class="flex flex-column gap-2">
-          <label for="numeroTarjeta">Número de tarjeta</label>
-          <InputNumber inputId="numeroTarjeta" type="text" v-model="numeroTarjeta" :useGrouping="false" />
+          <div class="flex justify-content-between">
+            <div class="flex flex-column">
+              <label for="primerosDigitosTarjeta">Primeros 4 dígitos de la tarjeta</label>
+              <InputNumber inputId="primerosDigitosTarjeta" type="text" v-model="primerosNumsTarjeta" :useGrouping="false" />
+            </div>
+            <div class="flex flex-column">
+              <label for="ultimosDigitosTarjeta">Últimos 4 dígitos de la tarjeta</label>
+              <InputNumber inputId="ultimosDigitosTarjeta" type="text" v-model="ultimosNumsTarjeta" :useGrouping="false" />
+            </div>
+          </div>
           <InlineMessage severity="info">Debe ingresar número de tarjeta si método de pago es TARJETA</InlineMessage>
         </div>
       </Transition>
@@ -141,11 +149,16 @@ const metodosPago = [
 const orderId = ref('')
 const esContribuyente = ref(false)
 const codigoMetodoPago = ref(1)
-const numeroTarjeta = ref(0)
+const primerosNumsTarjeta = ref(0)
+const ultimosNumsTarjeta = ref(0)
 const codigoTipoDocumentoIdentidad = ref(1)
 const nombreRazonSocial = ref('')
 const numeroDocumento = ref('')
 const emailCliente = ref('')
+
+const numeroTarjeta = computed(() => {
+  return Number(`${primerosNumsTarjeta.value}00000000${ultimosNumsTarjeta.value}`)
+})
 
 
 // Form manipulation
@@ -154,7 +167,7 @@ const pagoTarjetaValido = computed(() => {
   if (!pagoTarjeta.value) {
     return true
   } else {
-    return !!numeroTarjeta.value
+    return primerosNumsTarjeta.value && ultimosNumsTarjeta.value
   }
 })
 const datosClienteCompletos = computed(() => {
@@ -200,7 +213,8 @@ const limpiarCampos = () => {
   orderId.value = ''
   esContribuyente.value = false
   codigoMetodoPago.value = 1
-  numeroTarjeta.value = 0
+  primerosNumsTarjeta.value = 0
+  ultimosNumsTarjeta.value = 0
   codigoTipoDocumentoIdentidad.value = 1
   nombreRazonSocial.value = ''
   numeroDocumento.value = ''
