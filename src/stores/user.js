@@ -28,5 +28,10 @@ export const useUserStore = defineStore('user', () => {
     localStorage.setItem('facturas-api-token', token)
   }
 
-  return { isAuthenticated, authToken, userObj, authenticate, logout, login }
+  function setUserData({ userId, nombre }) {
+    userObj.userId = userId
+    userObj.nombre = nombre
+  }
+
+  return { isAuthenticated, authToken, userObj, authenticate, logout, login, setUserData }
 })

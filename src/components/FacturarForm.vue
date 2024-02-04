@@ -124,10 +124,12 @@ import InputSwitch from 'primevue/inputswitch'
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
 import InputText from 'primevue/inputtext'
 import Toast from 'primevue/toast'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 import { enviarFactura } from '@/services/FacturacionApi'
+import { useUserStore } from '@/stores/user'
+import { getUserData } from '@/services/FacturacionApi.js'
 
 const documentosIdentidad = [
   {
@@ -181,6 +183,12 @@ const metodosPago = [
     isActive: 1
   }
 ]
+
+const userStore = useUserStore()
+onMounted(async () => {
+  const userData = await getUserData()
+  userStore.setUserData({ userId: userData.id, nombre: userData.nombre })
+})
 
 // Form values
 const orderId = ref('')
